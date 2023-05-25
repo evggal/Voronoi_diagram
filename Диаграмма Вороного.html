@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<title>Диаграмма Воронова</title>
+<style>
+body {
+	padding:0; margin:0;
+	text-align:center;
+}
+canvas {
+	margin-top:5%;
+	border:1px black solid;
+}
+</style>
+<script>
+	function Point(x, y) { // класс точка
+		this.x = x // х - координата
+		this.y = y // у - координата
+	}
+	function Grafic(point1,point2) { // график функции y = kx + b
+		this.k = ((point2.x-point1.x)!=0) ? (point2.y-point1.y)/(point2.x-point1.x) : NaN; // k - прямой
+		this.b = ((point2.x-point1.x)!=0) ? (point1.y-this.k*point1.x) : point1.y; // b - прямой
+		this.x = (y) => {let x = (y - this.b)/this.k; return ((point2.x-point1.x)!=0) ? x : b;}; // x - прямой
+		this.y = (x) => {let y = this.k*x+this.b; return ((point2.x-point1.x)!=0) ? y : NaN}; // y - прямой
+	}
+	function Perpendicular(graphic, point) { // перпендикуляр
+		this.k = 1/graphic.k; // k - перпендикуляра
+		this.b = (point.y-this.k*point.x); // b - перпендикуляра
+		this.x = (y) => {let x = (y - this.b)/this.k; return x;}; // x - перпендикуляра
+		this.y = (x) => {let y = this.k*x+this.b; return y}; // y - перпендикуляра 
+	}
+	function Intersection(graph1, graph2) {
+		return new Point((graph2.b-graph1.b)/(graph2.k-graph1.k), graph1.y((graph2.b-graph1.b)/(graph2.k-graph1.k)));
+	}
+	function Flength(point1,point2) { // находим расстояние между точками
+		return Math.sqrt(Math.pow(point2.x-point1.x,2) + Math.pow(point2.y-point1.y,2))
+	}
+	function Range_check(center, point1, point2) {
+		return (Flength(point1, point2)>=Math.max(Flength(point1, point),Flength(point, point2)))
+	}
+	function Angle2(graph1, graph2) {
+		let tn = (1 + graph2.k*graph1.k==0) ? 
+		90 : (graph2.k-graph1.k)/(1 + graph2.k*graph1.k);
+		return tn==90 ? 90 : Math.atan(tn);
+	}
+	function Angle3(graph, graph1, graph2) {
+		let tn1 = (1 + graph.k*graph1.k==0) ? 
+		90 : (graph.k-graph1.k)/(1 + graph.k*graph1.k);
+		let tn2 = (1 + graph2.k*graph.k==0) ? 
+		90 : (graph2.k-graph.k)/(1 + graph2.k*graph.k);
+		let tn = (1 + graph2.k*graph1.k==0) ? 
+		90 : (graph2.k-graph1.k)/(1 + graph2.k*graph1.k);
+		/*sumtn = (1 + graph.k*graph1.k==0 || 1 + graph2.k*graph.k==0 || 1 + graph2.k*graph1.k==0) ?
+		(-1+th1*tn2)/(tn1+tn2) : (tn1+tn2)/(1+tn1*tn2);*/
+		let Angle1 = tn1==90 ? 90 : Math.atan(tn1);
+		let Angle2 = tn2==90 ? 90 : Math.atan(tn2);
+		let Angle = tn==90 ? 90 : Math.atan(tn);
+		if (Angle>=(Angle1+Angle2))
+		{return true;}
+		else {return false;}
+	}
+	function Triangle(center, point, point1, point2) {
+		let g1 = new Grafic(point, point1); //график 1-3 точки
+		let g2 = new Grafic(point, point2); // график 2-3 точки
+		let g12 = new Grafic(point1, point2); // график 1-2 точки
+		let p1 = new Perpendicular(g1, center);
+		let p2 = new Perpendicular(g2, center);
+		let p12 = new Perpendicular(g12, center);
+		let t1 = Intersection(g1,p1);
+		let t2 = Intersection(g2,p2);
+		let t12 = Intersection(g12,p12);
+		return (Flength(center, t1)>Flength(center, t12) && Flength(center, t2)>Flength(center, t12))
+	}
+	function Circle(center, point1, point2, new_point) { // проверка окружности
+		return Flength(center,new_point)<=Flength(point1,point2) 
+	}
+	function minimum(mas = new Array, number)
+	{
+		mas.sort();
+		return mas.indexOf(mas[number]);
+	}
+</script>
+</head>
+
+<body>
+<canvas id="canvas" width="1000px" height="500px"></canvas>
+</body>
+
+<script>
+    let  n = 50; // количество точек на диаграмме
+	let  point = [n]; // массив точек
+	let  len = [n];
+    for (var i=0; i<n; i++)
+	{
+		point[i] = new Point(Math.round(100+800*Math.random()), Math.round(100+300*Math.random()));
+		len[i] = [n];
+	}
+	var aaa = [];
+	for (var i=0; i<n; i++) {
+		for (var j=0; j<=i; j++) {
+			len[i][j] = Flength(point[i], point[j]);
+			len[j][i] = Flength(point[i], point[j]);
+			aaa.push[i];
+		}
+	}
+	var ind = 0;
+	var turn = [];
+	var center = point[ind];
+	var count = 1;
+	if (count<n) {
+		nextPoint = point[minimum(len[ind],count)];
+		count+=1;
+		turn.push({"point" : nextPoint, "graph" : new Grafic(center, nextPoint)});
+	}
+	if (count<n) {
+		nextPoint = point[minimum(len[ind],count)];
+		count+=1;
+		turn.push({"point" : nextPoint, "graph" : new Grafic(center, nextPoint)});
+	}
+	for (var i=count; i<n; i++) {
+		nextPoint = point[minimum(len[ind],count)];
+		graph = new Grafic(center, nextPoint)
+		console.log(i);
+		for (var p=0; p<turn.length-1;p++) {
+			p1 = turn[p];
+			p2 = turn[p+1];
+			console.log(p1);
+			console.log(p2);
+			if (p1.graph.k == p2.graph.k) {
+				console.log("==");
+				if (p1.graph.y(nextPoint.x)>p1.graph.x(nextPoint.y)) {
+					turn.splice(p,{"point" : nextPoint, "graph" : new Grafic(center, nextPoint)})
+					break;
+				} else {
+					turn.push({"point" : nextPoint, "graph" : new Grafic(center, nextPoint)})
+					break;
+				}
+			} else  { //if (Range_check(center, p1.point, p2.point))
+				console.log("a");
+				if (Angle3(graph, p1.graph, p2.graph)) {
+					if ( Circle(center, p1.point, p2.point, nextPoint)) { // Triangle(center, nextPoint, p1.point, p2.point) &&
+						turn.splice(p, {"point" : nextPoint, "graph" : new Grafic(center, nextPoint)})
+						console.log("t");
+						break;
+					}
+				} else {
+					if (Angle2(turn[0].graph, turn[turn.length-1].graph)<180) {
+						turn.splice(turn.length-1, {"point" : nextPoint, "graph" : new Grafic(center, nextPoint)})
+						console.log("g");
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	
+
+
+	var canvas = document.getElementById('canvas');
+	var ctx = canvas.getContext("2d");
+	for (var i=0; i<n; i++)
+	{
+		ctx.beginPath();
+		ctx.moveTo(point[i].x, point[i].y);
+		ctx.arc(point[i].x, point[i].y, 3, 0, Math.PI*2, true);
+		ctx.fill();
+		ctx.stroke();
+	}
+
+</script>
+
+</html>
+

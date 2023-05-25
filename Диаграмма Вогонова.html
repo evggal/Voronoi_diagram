@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<title>Диаграмма Воронова</title>
+<style>
+body {
+	padding:0; margin:0;
+	text-align:center;
+}
+canvas {
+	margin-top:5%;
+	border:1px black solid;
+}
+</style>
+
+</head>
+
+<body>
+<canvas id="canvas" width="1000px" height="500px"></canvas>
+</body>
+
+</html>
+
+<script>
+	/*var n = 3;
+	var index = [n], koordinati = [n], dlina = [n];
+	for (var i=0; i<n; i++)
+	{
+		index[i] = i;
+		koordinati[i] = {x:Math.round(100+800*Math.random()), y:Math.round(100+800*Math.random())};
+		dlina[i] = [n];
+		document.write(koordinati[i].x, " ", koordinati[i].y, " ");
+	}
+	for (var i=0; i<n; i++)
+	{
+		for (var j=0; j<=i; i++)
+		{
+			if (i==j) {dlina[i][j] = 0;}
+			else {
+				dlina[i][j]=Math.sqrt(Math.pow(koordinati[j].x-koordinati[i].x) + Math.pow(koordinati[j].y-koordinati[i].y));
+				dlina[j][i]=dlina[i][j];
+			}
+		}
+	}*/
+	
+	
+	
+	function FunX(a,b,y)
+	{
+		return (y-b)/a;
+	}
+	function FunY(a,b,x)
+	{
+		return a*x+b;
+	}
+	function Center(x1,y1, x2,y2)
+	{
+		var x = x2-x1, y = y2-y1;
+		return {x:x, y:y};
+	}
+	function Naxodim_A_B(x1,y1, x2,y2)
+	{
+		var a = (y2 - y1)/(x2 - x1);
+		var b = y1 - (a * x1);
+		return {a:a,b:b};
+	}
+	function Naxodim_perpendiculiar(a, x, y)
+	{
+		a = -1/a;
+		var b = y - (a * x);
+		return {a:a,b:b};
+	}
+	function Naxodim_peresechenia(a1,b1,a2,b2)
+	{
+		x = (b2-b1)/(a1-a2);
+		y = a*x+b1;
+		return {x:x,y:y};
+	}
+	function minimum(mas, number)
+	{
+		for (var i=0;i<number; i++)
+		{
+			 mas.splice(mas.indexOf(Math.min(mas)), 1);
+		}
+		alert((Math.min(mas)));
+		//ind = mas.indexOf(Math.min(mas));
+		return  ind;
+	}
+	var n = 3; // количество точек на диаграмме
+	var tochki = [n]; // координаты точек
+	var dlina = [n]; // растояние между точками
+	var grafik_tochka_tochka = [n]; //уравнения для прямой от точки к точке
+	var Seredina = [n];
+	var grafic_perpendiculiar = [n]; // уравнения для перпендикуляра между точками
+	var peresechenia = [n]; //точки пересечения перпендикуляров
+	for (var i=0; i<n; i++)
+	{
+		// записываем случайные координаты
+		tochki[i] = {
+			
+		};
+		document.write("<p>", tochki[i].x, " ", tochki[i].y, "</p>");
+		dlina[i] = [n];
+		peresechenia[i] = [n];
+		grafik_tochka_tochka[i] = [n];
+		grafic_perpendiculiar[i] = [n];
+		Seredina[i] = [n];
+	}
+	for (var i=0;i<n;i++)
+	{
+		document.write("<p>");
+		for (var j=0;j<=i;j++)
+		{
+			// находим растояние между точками и записываем в двумерный массив
+			// на главной диагонали получатся нули
+			if (i==j)
+			{
+				dlina[i][j] = 0;
+			}
+			else
+			{
+				dlina[i][j] = Math.round(Math.sqrt(Math.pow((tochki[j].x-tochki[i].x), 2) + Math.pow((tochki[j].y-tochki[i].y), 2)));
+				dlina[j][i] = dlina [i][j];
+			}
+			document.write(" ", dlina[i][j], " ");
+		}
+		document.write("</p>");
+	}
+	/*for (var index=0; index<n; index++)
+	{
+
+	}*/
+	document.write("<p>", dlina, "</p>");
+	document.write("<p>", minimum(2, dlina[1]), "</p>");
+
+
+	var index = 0;// индекс рассматриваемой точки
+	var count = 1;//индекс рассматриваемой точки относительно основной (index)
+	var massiv = [];//точки пересечения относительно главной точки (index)
+	var NewPoint = minimum(dlina[index], count); //точка с минимаьлным растоянием относительно (index)
+	grafik_tochka_tochka[index][NewPoint] = Naxodim_A_B(tochki[index].x,tochki[index].y,tochki[NewPoint].x,tochki[NewPoint].y);//уравнения для прямой от точки к точке
+	grafik_tochka_tochka[NewPoint][index] = Naxodim_A_B(tochki[index].x,tochki[index].y,tochki[NewPoint].x,tochki[NewPoint].y);
+	Seredina[NewPoint][index] = Center(tochki[index].x,tochki[index].y,tochki[NewPoint].x,tochki[NewPoint].y);
+	Seredina[index][NewPoint] = Center(tochki[index].x,tochki[index].y,tochki[NewPoint].x,tochki[NewPoint].y);
+	grafic_perpendiculiar[index][NewPoint] = Naxodim_perpendiculiar[grafik_tochka_tochka[index][NewPoint].a, Seredina[NewPoint][index].x]; // уравнения для перпендикуляра между точками
+	grafic_perpendiculiar[NewPoint][index] = Naxodim_perpendiculiar[grafik_tochka_tochka[index][NewPoint].a, Seredina[NewPoint][index].x];
+
+
+
+
+
+
+
+
+
+
+
+
+
+	var canvas = document.getElementById('canvas');
+	var ctx = canvas.getContext("2d");
+	for (var i=0; i<n; i++)
+	{
+		ctx.beginPath();
+		ctx.moveTo(tochki[i].x, tochki[i].y);
+		ctx.arc(tochki[i].x, tochki[i].y, 3, 0, Math.PI*2, true);
+		ctx.fill();
+		ctx.stroke();
+	}
+	ctx.lineWidth = 3;
+	ctx.beginPath();
+	for (var i = -2; i <= 2; i += 0.2) {
+		ctx[i?'lineTo':'moveTo'](i*z, -y(i)*z);
+	}
+	ctx.beginPath();
+   ctx.moveTo(0, FunY(0));
+   ctx.lineTo(FunX(0), 0);
+   ctx.stroke();
+	//ctx.arc(x, y, radius, startAngle, endAngle, counterclockwise);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

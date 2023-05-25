@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Voronoi</title>
+  <style>
+    body {
+        padding:0; margin:0;
+        text-align:center;
+    }
+    canvas {
+        margin-top:5%;
+        border:1px black solid;
+    }
+    </style>
+ </head>
+<body>
+    <script>
+        function Point(x, y) { // класс точка
+            this.x = x // х - координата
+            this.y = y // у - координата
+	    }
+        /*class Dpoint extends Point {
+            Rpoint = new Point;
+            Lpoint = new Point;
+        }*/
+        function Graf(x,a,b,c) {
+            var y = a*x*x + b*x + c;
+            return y;
+        }
+    </script>
+    
+
+    <canvas id="canvas" width="1000px" height="500px"></canvas>
+
+
+    <script>
+        let  n = 10; // количество точек на диаграмме
+	    let  point = [n];
+        for (var i=0; i<n; i++)
+        {
+            point[i] = new Point(Math.round(100+800*Math.random()), Math.round(100+300*Math.random()));
+        }
+        point.sort((a, b) => a.y < b.y ? 1 : -1);
+        
+        let workPoint = [];
+        let numberPoint = 0;
+        let line = point[numberPoint].y;
+        
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext("2d");
+        /*for (var i=0; i<n; i++)
+        {
+            ctx.beginPath();
+            ctx.moveTo(point[i].x, point[i].y);
+            ctx.arc(point[i].x, point[i].y, 3, 0, Math.PI*2, true);
+            ctx.fill();
+            ctx.stroke();
+        }*/
+
+        while (true) {
+            if (line == point[numberPoint].y) {
+                workPoint.push(point[numberPoint]);
+                workPoint.sort((a, b) => a.x > b.x ? 1 : -1);
+                numberPoint++;
+                console.log(1);
+            }
+            if (workPoint.length>2 && line!=workPoint[workPoint.length-1].y) {
+                console.log(2);
+                for (var i=1; i<workPoint.length; i++) {
+                    console.log('i' + i);
+                    var p1 = Math.abs(line-workPoint[i-1].y),
+                    p2 = Math.abs(line-workPoint[i].y)
+                    a1 = 1/(2*p1), a2 = 1/(2*p2),
+                    b1 = workPoint[i-1].x/p1, b2 = workPoint[i].x/p2,
+                    c1 = (p2*workPoint[i-1].x*workPoint[i-1].x + workPoint[i-1].y*workPoint[i-1].y - line*line)/p1,
+                    c2 = (p1*workPoint[i].x*workPoint[i].x + workPoint[i].y*workPoint[i].y - line*line)/p2,
+                    a = a2-a1, b = b2-b1, c = c2-c1,
+                    D = b*b - 4*a*c;
+                    console.log(workPoint[i-1].x, "x y", workPoint[i-1].y);
+                    console.log(workPoint[i].x, "x y", workPoint[i].y);
+                    console.log(p1, " ", p2);
+                    console.log(a1, " ", a2);
+                    console.log(b1, " ", b2);
+                    console.log(c1, " ", c2);
+                    if (D<0) {
+                        console.log("D < " + 0);
+                    }
+                    else if (D==0) {
+                        console.log("D = 0");
+                        var x = -b/(2*a);
+                        ctx.beginPath();
+                        ctx.moveTo(Math.round(x), Math.round(Graf(x,a1,b1,c1)));
+                        ctx.arc(Math.round(x), Math.round(Graf(x,a1,b1,c1)), 1, 0, Math.PI*2, true);
+                        ctx.fill();
+                        ctx.stroke();
+                        console.log(Math.round(x), " g ", Math.round(Graf(x,a1,b1,c1)));
+                    }
+                    else if (D>0) {
+                        console.log("D > 0");
+                        var x1 = (-b + Math.sqrt(D))/(2*a),
+                            x2 = (-b - Math.sqrt(D))/(2*a);
+                        console.log(x1, " ", x2);
+                        var x = (x1<1000 && x1>0) ? x1 : x2;
+                        ctx.beginPath();
+                        ctx.moveTo(Math.round(x), Math.round(Graf(x,a1,b1,c1)));
+                        ctx.arc(Math.round(x), Math.round(Graf(x,a1,b1,c1)), 1, 0, Math.PI*2, true);
+                        ctx.fill();
+                        ctx.stroke();
+                        console.log(Math.round(x), " g ", Math.round(Graf(x,a1,b1,c1))); //Graf(x,workPoint[i].x, workPoint[i].y, line)
+                    }
+                }
+            }
+            line-=1;
+            if (line==0 || numberPoint==n) {
+                break;
+            }
+        }
+        for (var i=0; i<n; i++)
+        {
+            ctx.beginPath();
+            ctx.moveTo(point[i].x, point[i].y);
+            ctx.arc(point[i].x, point[i].y, 3, 0, Math.PI*2, true);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        
+      
+
+
+
+
+
+
+
+    
+    </script>
+</body>
+</html>

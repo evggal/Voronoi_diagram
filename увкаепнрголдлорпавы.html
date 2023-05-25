@@ -1,0 +1,47 @@
+<html>
+    <head>
+
+     </head>
+    <body>
+        <script>
+            import Voronoi from 'voronoi';
+            const voronoi = new Voronoi();
+            function randomPoints([width, height], nPoints, margin = 0) {
+  const points = [];
+  for (let i = 0; i < nPoints; i++) {
+    points.push({ 
+      x: random(margin, width - margin), 
+      y: random(margin, height - margin) 
+    });
+  }
+  return points;
+}
+
+const margin = 20;
+const width = 1000;
+const height = 1000;
+const nPoints = 100;
+const points = randomPoints([width, height], nPoints, margin);
+const bbox = { xl: margin, xr: width - margin, yt: margin, yb: height - margin };
+
+const diagram = voronoi.compute(points, bbox);
+diagram.edges.forEach(edge => {
+  new Path.Line({
+    from: edge.va,
+    to: edge.vb,
+    strokeColor: 'black'
+  });
+});
+diagram.cells.forEach(cell => {
+  if (cell && cell.halfedges.length > 2) {
+    const segments = cell.halfedges.map(edge => edge.getEndpoint());
+    const path = new Path({
+      segments,
+      closed: true,
+      fillColor: please.make_color()
+    });
+  }
+});
+        </script>
+    </body>
+</html>
